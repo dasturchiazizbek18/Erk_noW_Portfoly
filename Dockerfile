@@ -1,11 +1,11 @@
 FROM php:8.2-apache
 
-# Tizim paketlarini hamda SQLite kutubxonalarini o'rnatish
+# Tizim paketlarini o'rnatish
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip libsqlite3-dev sqlite3
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip libsqlite3-dev
 
-# PHP kengaytmalarini (shu jumladan pdo_sqlite va sqlite3) o'rnatish
-RUN docker-php-ext-install pdo_mysql pdo_sqlite sqlite3 mbstring exif pcntl bcmath gd
+# PHP kengaytmalarini o'rnatish (pdo_sqlite yetarli)
+RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd
 
 # Composer'ni yuklab olish
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -26,5 +26,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 EXPOSE 80
 
-# Server yonishidan oldin avtomatik migratsiyani bajarish va keyin Apache'ni ishga tushirish
+# Server yonishidan oldin avtomatik migratsiya qilish va Apache'ni ishga tushirish
 CMD php artisan migrate --force && apache2-foreground
